@@ -1,18 +1,18 @@
-import { getEnv } from './env/env.validation';
+import { isDevEnv } from '../app.enviroment';
+import { getEnv } from './env.validation';
 import { registerAs } from '@nestjs/config';
 
-export default registerAs('database', () => {
+export default registerAs('typeorm', () => {
   const env = getEnv();
-  const isDev = env.NODE_ENV === 'development';
 
   return {
-    type: 'postgres' as const,
+    type: 'postgres',
     url: env.DATABASE_URL,
     entities: [__dirname + '/../../**/*.entity{.ts,.js}'],
     migrations: [__dirname + '/../migrations/*.{ts,js}'],
     migrationsRun: false,
     synchronize: false,
-    logging: isDev,
+    logging: isDevEnv,
     ssl: false,
     extra: { max: 10 }
   };

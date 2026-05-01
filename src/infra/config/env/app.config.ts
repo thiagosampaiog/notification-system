@@ -1,10 +1,11 @@
 import { getEnv } from './env.validation';
 import { registerAs } from '@nestjs/config';
 
-export default registerAs('appConfig', () => {
+export default registerAs('app', () => {
   const env = getEnv();
   return {
     environment: env.NODE_ENV || 'production',
-    port: env.PORT || 3001
+    port: env.PORT || 3001,
+    cors: env.CORS_ALLOWED_ORIGINS
   };
 });

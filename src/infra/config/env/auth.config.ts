@@ -1,7 +1,7 @@
 import { getEnv } from './env.validation';
 import { registerAs } from '@nestjs/config';
 
-export default registerAs('authConfig', () => {
+export default registerAs('auth', () => {
   const env = getEnv();
 
   return {
