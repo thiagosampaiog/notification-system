@@ -11,6 +11,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { minutes, ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule, type TypeOrmModuleOptions } from '@nestjs/typeorm';
 import typeormConfig from './infra/config/env/typeorm.config';
+import { UsersModule } from './modules/users/users.module';
 
 @Module({
   imports: [
@@ -30,7 +31,8 @@ import typeormConfig from './infra/config/env/typeorm.config';
         ttl: minutes(5),
         limit: 600
       }
-    ])
+    ]),
+    UsersModule
   ],
   providers: [
     {
