@@ -8,7 +8,7 @@ export default registerAs('typeorm', () => {
   return {
     type: 'postgres',
     url: env.DATABASE_URL,
-    entities: [__dirname + '/../../**/*.entity{.ts,.js}'],
+    entities: [__dirname + '/../../../**/*.entity{.ts,.js}'],
     migrations: [__dirname + '/../migrations/*.{ts,js}'],
     migrationsRun: false,
     synchronize: false,

@@ -1,7 +1,11 @@
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto, UpdateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { HashingProvider } from '@app/infra/hashing/hashing.provider';
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -18,7 +22,7 @@ export class UsersService {
     return rest;
   }
 
-  public async create(input: CreateUserDto) {
+  async create(input: CreateUserDto) {
     const exists = await this.userRepository.exists({
       where: [{ email: input.email }, { phone: input.phone }]
     });
@@ -35,18 +39,7 @@ export class UsersService {
     return this.sanitize(saved);
   }
 
-  public async findAll(): Promise<
-    Pick<
-      User,
-      | 'id'
-      | 'email'
-      | 'first_name'
-      | 'second_name'
-      | 'phone'
-      | 'created_at'
-      | 'updated_at'
-    >[]
-  > {
+  public async findAll() {
     return this.userRepository.find({
       select: {
         id: true,
@@ -60,11 +53,31 @@ export class UsersService {
     });
   }
 
+  async findById(userId: string): Promise<User> {
+    const found = await this.userRepository.findOne({ where: { id: userId } });
+    if (!found) throw new NotFoundException(`User not found`);
+    return found;
+  }
+
+  async update(
+    input: UpdateUserDto,
+    userId: string
+  ): Promise<Omit<User, 'password'>> {
+    const user = await this.findById(userId);
+
+    Object.assign(user, input);
+
+    const updated = await this.userRepository.save(user);
+    return this.sanitize(updated);
+  }
+
   public async delete(id: string) {
     const exists = await this.userRepository.exists({
       where: { id }
     });
 
     if (!exists) throw new ConflictException('User not found');
+
+    return this.userRepository.delete(id);
   }
 }
