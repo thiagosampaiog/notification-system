@@ -9,10 +9,10 @@ export const ENVSchema = z.object({
   REDIS_URL: z.string(),
   RABBITMQ_URL: z.string(),
   JWT_TOKEN_SECRET: z.string(),
-  JWT_TOKEN_EXPIRESIN: z.number(),
-  REFRESH_TOKEN_EXPIRESIN: z.number(),
+  JWT_TOKEN_EXPIRESIN: z.coerce.number().int().positive(),
+  REFRESH_TOKEN_EXPIRESIN: z.coerce.number().int().positive(),
   JWT_TOKEN_AUDIENCE: z.string(),
-  JWT_TOKEN_ISSUER: z.string(),
+  JWT_TOKEN_ISSUER: z.string()
 });
 
 export type Env = z.infer<typeof ENVSchema>;

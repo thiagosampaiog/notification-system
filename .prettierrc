@@ -1,4 +1,24 @@
 {
+  "attributeSort": "ASC",
+  "endOfLine": "auto",
+  "overrides": [
+    {
+      "files": "*.ts",
+      "options": {
+        "importOrderParserPlugins": [
+          "decorators-legacy",
+          "typescript"
+        ]
+      }
+    }
+  ],
+  "plugins": [
+    "prettier-plugin-organize-attributes",
+    "@trivago/prettier-plugin-sort-imports"
+  ],
+  "printWidth": 80,
   "singleQuote": true,
-  "trailingComma": "all"
+  "tabWidth": 2,
+  "trailingComma": "none",
+  "useTabs": false
 }
