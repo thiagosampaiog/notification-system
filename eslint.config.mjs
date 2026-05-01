@@ -1,10 +1,11 @@
 // @ts-check
+import { defineConfig } from 'eslint/config'
 import eslint from '@eslint/js'
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
 import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
-export default tseslint.config(
+export default defineConfig(
   {
     ignores: ['eslint.config.mjs']
   },
@@ -33,6 +34,7 @@ export default tseslint.config(
       '@typescript-eslint/interface-name-prefix': 'off',
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
+      "@typescript-eslint/consistent-type-imports": "off",
       '@typescript-eslint/no-unused-vars': 'off',
       '@typescript-eslint/no-namespace': 'off',
       '@typescript-eslint/no-use-before-define': 'off',
@@ -40,7 +42,7 @@ export default tseslint.config(
       '@typescript-eslint/no-unused-expressions': 'off',
       '@typescript-eslint/no-non-null-assertion': 'off',
       '@typescript-eslint/no-empty-function': 'off',
-      'prettier/prettier': ['error', { endOfLine: 'auto' }],
+      'prettier/prettier': ['error', { endOfLine: 'auto' }]
     }
   }
 )

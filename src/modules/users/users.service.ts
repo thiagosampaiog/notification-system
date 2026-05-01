@@ -1,9 +1,9 @@
-import type { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
-import type { HashingProvider } from '@app/infra/hashing/hashing.provider';
-import { ConflictException, Inject, Injectable } from '@nestjs/common';
+import { HashingProvider } from '@app/infra/hashing/hashing.provider';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Or, type Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
@@ -65,6 +65,6 @@ export class UsersService {
       where: { id }
     });
 
-    if (exists) throw new ConflictException('Phone or email is already in use');
+    if (!exists) throw new ConflictException('User not found');
   }
 }

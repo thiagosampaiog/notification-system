@@ -5,7 +5,7 @@ export const ENVSchema = z.object({
     .enum(['development', 'test', 'production'])
     .default('development'),
   PORT: z.coerce.number().int().positive().default(3001),
-  CORS_ALLOWED_ORIGINS: z.string().default('http://localhost:3001').transform((val) => val.split(',')),
+  CORS_ALLOWED_ORIGINS: z.string().default('http://localhost:3001/v1/api').transform((val) => val.split(',')),
 
   DATABASE_URL: z.string().default('postgresql://notification:notification123@db:5432/notification'),
   REDIS_URL: z.string().default('redis://cache:6379'),
@@ -14,8 +14,8 @@ export const ENVSchema = z.object({
   JWT_TOKEN_SECRET: z.string().default('notification-system'),
   JWT_TOKEN_EXPIRESIN: z.coerce.number().int().positive().default(3600),
   REFRESH_TOKEN_EXPIRESIN: z.coerce.number().int().positive().default(86400),
-  JWT_TOKEN_AUDIENCE: z.string().default('localhost:3001'),
-  JWT_TOKEN_ISSUER: z.string().default('localhost:3001')
+  JWT_TOKEN_AUDIENCE: z.string().default('localhost:3001/v1/api'),
+  JWT_TOKEN_ISSUER: z.string().default('localhost:3001/v1/api')
 });
 
 export type Env = z.infer<typeof ENVSchema>;
