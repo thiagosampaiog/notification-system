@@ -22,7 +22,7 @@
     "test:cov": "jest --coverage",
     "typeorm": "node -r ts-node/register -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "migration:run": "npm run typeorm -- migration:run -d src/infra/config/typeorm-datasource.ts",
-    "migration:generate": "npm run typeorm -- migration:generate src/infra/database/migrations/CreateUsers -d src/infra/config/typeorm-datasource.ts",
+    "migration:generate": "npm run typeorm -- migration:generate src/infra/database/migrations/AutoMigration -d src/infra/config/typeorm-datasource.ts",
     "migration:revert": "npm run typeorm -- migration:revert -d src/infra/config/typeorm-datasource.ts",
     "migration:create": "npm run typeorm -- migration:create src/infra/database/migrations/$npm_config_name",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",

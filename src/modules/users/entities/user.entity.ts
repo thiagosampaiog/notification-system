@@ -8,8 +8,8 @@ import {
 
 @Entity('users')
 export class User {
-  @PrimaryGeneratedColumn()
-  id!: number;
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
 
   @Column({ type: 'varchar', length: 50 })
   first_name!: string;
@@ -17,7 +17,7 @@ export class User {
   @Column({ type: 'varchar', length: 50 })
   second_name!: string;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ type: 'varchar', length: 100, select: false })
   password!: string;
 
   @Column({ type: 'varchar', length: 150, unique: true })
@@ -30,5 +30,5 @@ export class User {
   created_at!: Date;
 
   @UpdateDateColumn()
-  update_at!: Date;
+  updated_at!: Date;
 }
