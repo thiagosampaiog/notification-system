@@ -2,19 +2,17 @@ import { CreateUserDto } from '../users/dto/create-user.dto';
 import { User } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
 import { AuthSignInDto } from './dto/auth-signIn.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { AuthenticatedUser } from '@app/common/types/payload-user.type';
 import authConfig from '@app/infra/config/env/auth.config';
 import { HashingProvider } from '@app/infra/hashing/hashing.provider';
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import type { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(User)
     private readonly userService: UsersService,
     @Inject(authConfig.KEY)
     private readonly authConfiguration: ConfigType<typeof authConfig>,
@@ -30,13 +28,16 @@ export class AuthService {
     const { email, password } = input;
     const user = await this.userService.findUserForLogin(email);
     if (!user) throw new UnauthorizedException('Invalid credentials');
-    const isValidPassword = this.hashingProvider.comparePassword(
+
+    const isValidPassword = await this.hashingProvider.comparePassword(
       password,
       user.password
     );
+
     if (!isValidPassword)
       throw new UnauthorizedException('Invalid credentials');
-    return;
+
+    return this.generateToken(user);
   }
 
   public async refreshToken(input: RefreshTokenDto) {

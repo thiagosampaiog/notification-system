@@ -12,6 +12,9 @@ import { minutes, ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule, type TypeOrmModuleOptions } from '@nestjs/typeorm';
 import typeormConfig from './infra/config/env/typeorm.config';
 import { UsersModule } from './modules/users/users.module';
+import { AuthGuard } from './common/guards/auth.guard';
+import { AuthModule } from './modules/auth/auth.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -32,12 +35,18 @@ import { UsersModule } from './modules/users/users.module';
         limit: 600
       }
     ]),
-    UsersModule
+    UsersModule,
+    AuthModule,
+    JwtModule.registerAsync(authConfig.asProvider())
   ],
   providers: [
     {
       provide: APP_GUARD,
       useClass: CustomThrottlerGuard
+    },
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard
     }
   ]
 })
