@@ -1,0 +1,98 @@
+services:
+  db:
+    image: postgres:16
+    ports:
+      - '5432:5432'
+    container_name: notification-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-notification}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-notification123}
+      POSTGRES_DB: ${POSTGRES_DB:-notification}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - notification-system-network
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: npm run start:dev
+    container_name: notification-api
+    ports:
+      - '3001:3001'
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      REDIS_HOST: cache
+      REDIS_PORT: 6379
+      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@queue:5672
+    volumes:
+      - .:/app
+    networks:
+      - notification-system-network
+    depends_on:
+      db:
+        condition: service_healthy
+      queue:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+
+  queue:
+    image: rabbitmq:3-management
+    container_name: notification-rabbit
+    hostname: rabbitmq
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-notification}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-notification123}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ['CMD', 'rabbitmq-diagnostics', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  cache:
+    image: redis:latest
+    container_name: notification-redis
+    volumes:
+      - redis_data:/data
+    networks:
+      - notification-system-network
+    ports:
+      - '6379:6379'
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+networks:
+  notification-system-network:
+    driver: bridge
+    name: notification-system-network
+
+volumes:
+  postgres_data:
+    driver: local
+    name: notification-postgres-data
+  rabbitmq_data:
+    driver: local
+    name: notification-rabbitmq-data
+  redis_data:
+    driver: local
+    name: notification-redis-data
