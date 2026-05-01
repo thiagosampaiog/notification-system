@@ -53,13 +53,13 @@ export class UsersService {
     });
   }
 
-  async findById(userId: string): Promise<User> {
+  public async findById(userId: string): Promise<User> {
     const found = await this.userRepository.findOne({ where: { id: userId } });
     if (!found) throw new NotFoundException(`User not found`);
     return found;
   }
 
-  async update(
+  public async update(
     input: UpdateUserDto,
     userId: string
   ): Promise<Omit<User, 'password'>> {
@@ -69,6 +69,14 @@ export class UsersService {
 
     const updated = await this.userRepository.save(user);
     return this.sanitize(updated);
+  }
+
+  public async findUserForLogin(email: string) {
+    return this.userRepository.findOne({
+      where: {
+        email: email
+      }
+    });
   }
 
   public async delete(id: string) {

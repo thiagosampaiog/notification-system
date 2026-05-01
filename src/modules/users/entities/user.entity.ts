@@ -1,3 +1,4 @@
+import { Role } from '@app/common/types/role.enum';
 import {
   Column,
   CreateDateColumn,
@@ -25,6 +26,9 @@ export class User {
 
   @Column({ type: 'varchar', unique: true })
   phone!: string;
+
+  @Column({ default: Role.DEFAULT, enum: Role })
+  role!: Role;
 
   @CreateDateColumn()
   created_at!: Date;
