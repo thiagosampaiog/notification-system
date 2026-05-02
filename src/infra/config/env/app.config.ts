@@ -6,6 +6,7 @@ export default registerAs('app', () => {
   return {
     environment: env.NODE_ENV || 'production',
     port: env.PORT || 3001,
+    host: env.HOST || 'localhost',
     cors: env.CORS_ALLOWED_ORIGINS
   };
 });

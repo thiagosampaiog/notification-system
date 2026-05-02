@@ -1,16 +1,19 @@
 import { z } from 'zod';
 
 export const ENVSchema = z.object({
-  NODE_ENV: z
-    .enum(['development', 'test', 'production'])
-    .default('development'),
+  NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().int().positive().default(3001),
-  CORS_ALLOWED_ORIGINS: z.string().default('http://localhost:3001/v1/api').transform((val) => val.split(',')),
+  HOST: z.string().default('localhost'),
+  CORS_ALLOWED_ORIGINS: z
+    .string()
+    .default('http://localhost:3001/v1/api')
+    .transform((val) => val.split(',')),
 
   DATABASE_URL: z.string().default('postgresql://notification:notification123@db:5432/notification'),
   REDIS_URL: z.string().default('redis://cache:6379'),
-  RABBITMQ_URL: z.string().default('amqp://notification:notification123@queue:5672'),
-  
+  RABBITMQ_QUEUE_URL: z.string().default('amqp://notification:notification123@queue:5672'),
+  RABBITMQ_QUEUE_NAME: z.string().default('RABBITMQ_NOTIFICATION_QUEUE'),
+
   JWT_TOKEN_SECRET: z.string().default('notification-system'),
   JWT_TOKEN_EXPIRESIN: z.coerce.number().int().positive().default(3600),
   JWT_REFRESH_TOKKEN_SECRET: z.string().default('notification-system'),

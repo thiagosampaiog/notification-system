@@ -27,20 +27,16 @@ export class AuthService {
   async signIn(input: AuthSignInDto) {
     const { email, password } = input;
     const user = await this.userService.findUserForLogin(email);
-    
+
     if (!user) throw new UnauthorizedException('Invalid credentials');
 
     if (!password || !user.password) {
       throw new UnauthorizedException('Missing password or hash for comparison');
     }
 
-    const isValidPassword = await this.hashingProvider.comparePassword(
-      password,
-      user.password
-    );
+    const isValidPassword = await this.hashingProvider.comparePassword(password, user.password);
 
-    if (!isValidPassword)
-      throw new UnauthorizedException('Invalid credentials');
+    if (!isValidPassword) throw new UnauthorizedException('Invalid credentials');
 
     return this.generateToken(user);
   }
@@ -70,16 +66,8 @@ export class AuthService {
       phone,
       role
     };
-    const accessToken = await this.signToken(
-      id,
-      this.authConfiguration.expiresIn,
-      payload
-    );
-    const refreshToken = await this.signToken(
-      id,
-      this.authConfiguration.refreshTokenExpiresIn,
-      payload
-    );
+    const accessToken = await this.signToken(id, this.authConfiguration.expiresIn, payload);
+    const refreshToken = await this.signToken(id, this.authConfiguration.refreshTokenExpiresIn, payload);
     return {
       accessToken,
       refreshToken
