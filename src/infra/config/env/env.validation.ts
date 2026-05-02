@@ -13,6 +13,7 @@ export const ENVSchema = z.object({
   
   JWT_TOKEN_SECRET: z.string().default('notification-system'),
   JWT_TOKEN_EXPIRESIN: z.coerce.number().int().positive().default(3600),
+  JWT_REFRESH_TOKKEN_SECRET: z.string().default('notification-system'),
   REFRESH_TOKEN_EXPIRESIN: z.coerce.number().int().positive().default(86400),
   JWT_TOKEN_AUDIENCE: z.string().default('localhost:3001/v1/api'),
   JWT_TOKEN_ISSUER: z.string().default('localhost:3001/v1/api')
