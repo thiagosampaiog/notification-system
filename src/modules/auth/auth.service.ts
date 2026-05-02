@@ -48,7 +48,7 @@ export class AuthService {
   public async refreshToken(input: RefreshTokenDto) {
     try {
       const { sub } = await this.jwtService.verifyAsync(input.refreshToken, {
-        secret: this.authConfiguration.secret,
+        secret: this.authConfiguration.refreshSecret,
         audience: this.authConfiguration.audience,
         issuer: this.authConfiguration.issuer
       });
