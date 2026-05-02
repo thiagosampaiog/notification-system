@@ -27,7 +27,12 @@ export class AuthService {
   async signIn(input: AuthSignInDto) {
     const { email, password } = input;
     const user = await this.userService.findUserForLogin(email);
+    
     if (!user) throw new UnauthorizedException('Invalid credentials');
+
+    if (!password || !user.password) {
+      throw new UnauthorizedException('Missing password or hash for comparison');
+    }
 
     const isValidPassword = await this.hashingProvider.comparePassword(
       password,
