@@ -1,3 +1,4 @@
+import { AuthGuard } from './common/guards/auth.guard';
 import { CustomThrottlerGuard } from './common/guards/throttler.guard';
 import { environment } from './infra/config/app.enviroment';
 import appConfig from './infra/config/env/app.config';
@@ -5,16 +6,16 @@ import authConfig from './infra/config/env/auth.config';
 import cacheConfig from './infra/config/env/cache.config';
 import { validate } from './infra/config/env/env.validation';
 import queueConfig from './infra/config/env/queue.config';
+import typeormConfig from './infra/config/env/typeorm.config';
+import { AuthModule } from './modules/auth/auth.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
+import { UsersModule } from './modules/users/users.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
+import { JwtModule } from '@nestjs/jwt';
 import { minutes, ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule, type TypeOrmModuleOptions } from '@nestjs/typeorm';
-import typeormConfig from './infra/config/env/typeorm.config';
-import { UsersModule } from './modules/users/users.module';
-import { AuthGuard } from './common/guards/auth.guard';
-import { AuthModule } from './modules/auth/auth.module';
-import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -26,8 +27,7 @@ import { JwtModule } from '@nestjs/jwt';
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (config: ConfigService) =>
-        config.getOrThrow<TypeOrmModuleOptions>('typeorm')
+      useFactory: (config: ConfigService) => config.getOrThrow<TypeOrmModuleOptions>('typeorm')
     }),
     ThrottlerModule.forRoot([
       {
@@ -37,6 +37,7 @@ import { JwtModule } from '@nestjs/jwt';
     ]),
     UsersModule,
     AuthModule,
+    NotificationsModule,
     JwtModule.registerAsync(authConfig.asProvider())
   ],
   providers: [

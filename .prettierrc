@@ -16,7 +16,7 @@
     "prettier-plugin-organize-attributes",
     "@trivago/prettier-plugin-sort-imports"
   ],
-  "printWidth": 80,
+  "printWidth": 120,
   "singleQuote": true,
   "tabWidth": 2,
   "trailingComma": "none",
