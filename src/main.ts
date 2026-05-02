@@ -7,18 +7,17 @@ import { RmqOptions, Transport } from '@nestjs/microservices';
 import helmet from 'helmet';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { logger: ['log', 'error', 'warn'] });
+  const app = await NestFactory.create(AppModule);
+  const logger = new Logger('Bootstrap');
 
   const configService = app.get(ConfigService);
   const rabbitmqUrl = configService.getOrThrow<string>('queue.url') as string;
   const rabbitmqQueue = configService.getOrThrow<string>('queue.name') as string;
   const host = configService.getOrThrow('app.host');
   const port = configService.getOrThrow('app.port');
+  const appName = configService.getOrThrow<string>('app.name');
 
   app.use(helmet());
-  app.setGlobalPrefix('/v1/api');
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
-
   app.setGlobalPrefix('/v1/api');
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
@@ -42,5 +41,6 @@ async function bootstrap() {
     methods: ['HEAD', 'GET', 'POST', 'PUT', 'PATCH', 'DELETE']
   });
   await app.listen(port, host);
+  logger.log(`${appName} started listening on host: ${host}, port: ${port}, queue: ${rabbitmqQueue}`);
 }
 bootstrap();

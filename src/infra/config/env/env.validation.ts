@@ -4,6 +4,7 @@ export const ENVSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().int().positive().default(3001),
   HOST: z.string().default('localhost'),
+  NAME: z.string().default('notification_system'),
   CORS_ALLOWED_ORIGINS: z
     .string()
     .default('http://localhost:3001/v1/api')
