@@ -1,6 +1,7 @@
 import { Notification } from './entities/notification.entity';
 import { NotificationsController } from './notifications.controller';
 import { NotificationsService } from './notifications.service';
+import { NotificationsWorker } from './notifications.worker';
 import { RABBITMQ_SERVICE } from '@app/common/constants/injection-tokens';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -29,7 +30,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     ])
   ],
   providers: [NotificationsService],
-  controllers: [NotificationsController],
+  controllers: [NotificationsController, NotificationsWorker],
   exports: [NotificationsService]
 })
 export class NotificationsModule {}
