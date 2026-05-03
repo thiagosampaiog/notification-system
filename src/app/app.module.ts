@@ -1,4 +1,3 @@
-import smsConfig from '@app/infra/config/env/sms.config';
 import { AuthGuard } from '../common/guards/auth.guard';
 import { CustomThrottlerGuard } from '../common/guards/throttler.guard';
 import { environment } from '../infra/config/app.enviroment';
@@ -12,6 +11,8 @@ import { AuthModule } from '../modules/auth/auth.module';
 import { NotificationsModule } from '../modules/notifications/notifications.module';
 import { UsersModule } from '../modules/users/users.module';
 import awsConfig from '@app/infra/config/env/aws.config';
+import firebaseConfig from '@app/infra/config/env/firebase.config';
+import smsConfig from '@app/infra/config/env/sms.config';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
@@ -25,7 +26,7 @@ import { TypeOrmModule, type TypeOrmModuleOptions } from '@nestjs/typeorm';
       isGlobal: true,
       envFilePath: `.env.${(environment || 'development').trim()}`,
       validate,
-      load: [authConfig, queueConfig, typeormConfig, appConfig, cacheConfig, awsConfig, smsConfig]
+      load: [authConfig, queueConfig, typeormConfig, appConfig, cacheConfig, awsConfig, smsConfig, firebaseConfig]
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],

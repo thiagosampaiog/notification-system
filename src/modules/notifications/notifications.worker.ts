@@ -1,11 +1,12 @@
+import { EmailService } from '../email/email.service';
+import { PushService } from '../firebase/push.service';
+import { SmsService } from '../sms/sms.service';
 import { NotificationsService } from './notifications.service';
 import { NotificationCreatedEvent } from '@app/common/events/notification-created.event';
 import { NotificationProviderService } from '@app/common/types/notification-provider.interface';
 import { NotificationChannel, NotificationStatus } from '@app/common/types/notifications.type';
 import { Controller, Logger, NotFoundException } from '@nestjs/common';
 import { Ctx, EventPattern, Payload, RmqContext } from '@nestjs/microservices';
-import { EmailService } from '../email/email.service';
-import { SmsService } from '../sms/sms.service';
 
 @Controller()
 export class NotificationsWorker {
@@ -16,14 +17,13 @@ export class NotificationsWorker {
     private readonly notificationsService: NotificationsService,
     private readonly emailService: EmailService,
     private readonly smsService: SmsService,
-    // private readonly smsService: SmsService,
-    // private readonly pushService: PushService
+    private readonly pushService: PushService
   ) {
-    // this.providers = {
-    //   [NotificationChannel.EMAIL]: this.emailService,
-    //   [NotificationChannel.SMS]: this.smsService,
-    //   [NotificationChannel.PUSH]: this.pushService
-    // };
+    this.providers = {
+      [NotificationChannel.EMAIL]: this.emailService,
+      [NotificationChannel.SMS]: this.smsService,
+      [NotificationChannel.PUSH]: this.pushService
+    };
   }
 
   @EventPattern('notification.created')
@@ -38,7 +38,8 @@ export class NotificationsWorker {
 
       const notification = await this.notificationsService.findById(id);
       if (!notification) throw new NotFoundException(`Notification ${id} not found`);
-      const provider = this.smsService;
+
+      const provider = this.providers[notification.channel];
       await provider.send(notification);
       await this.notificationsService.updateStatus(id, NotificationStatus.SENT);
       /* 

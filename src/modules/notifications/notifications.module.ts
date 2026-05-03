@@ -1,4 +1,5 @@
 import { EmailModule } from '../email/email.module';
+import { FirebaseModule } from '../firebase/firebase.module';
 import { SmsModule } from '../sms/sms.module';
 import { Notification } from './entities/notification.entity';
 import { NotificationsController } from './notifications.controller';
@@ -15,6 +16,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     TypeOrmModule.forFeature([Notification]),
     EmailModule,
     SmsModule,
+    FirebaseModule,
     ClientsModule.registerAsync([
       {
         name: RABBITMQ_SERVICE,

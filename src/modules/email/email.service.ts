@@ -1,10 +1,11 @@
 import { Notification } from '../notifications/entities/notification.entity';
+import { NotificationProviderService } from '@app/common/types/notification-provider.interface';
 import { SendEmailCommand, SESClient } from '@aws-sdk/client-ses';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class EmailService {
+export class EmailService implements NotificationProviderService {
   private sesClient: SESClient;
   private sourceEmail: string;
   private readonly logger = new Logger(EmailService.name);
@@ -38,5 +39,4 @@ export class EmailService {
       })
     );
   }
-  
 }
