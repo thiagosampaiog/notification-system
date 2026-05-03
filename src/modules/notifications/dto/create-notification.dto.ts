@@ -18,7 +18,7 @@ export class CreateNotificationDto {
   @IsEmail()
 
   @ValidateIf((o: CreateNotificationDto) => o.channel === NotificationChannel.SMS)
-  @IsPhoneNumber('BR')
+  @IsPhoneNumber()
 
   @ValidateIf((o: CreateNotificationDto) => o.channel === NotificationChannel.PUSH)
   @IsString()

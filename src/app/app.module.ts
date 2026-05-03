@@ -1,3 +1,4 @@
+import smsConfig from '@app/infra/config/env/sms.config';
 import { AuthGuard } from '../common/guards/auth.guard';
 import { CustomThrottlerGuard } from '../common/guards/throttler.guard';
 import { environment } from '../infra/config/app.enviroment';
@@ -24,7 +25,7 @@ import { TypeOrmModule, type TypeOrmModuleOptions } from '@nestjs/typeorm';
       isGlobal: true,
       envFilePath: `.env.${(environment || 'development').trim()}`,
       validate,
-      load: [authConfig, queueConfig, typeormConfig, appConfig, cacheConfig, awsConfig]
+      load: [authConfig, queueConfig, typeormConfig, appConfig, cacheConfig, awsConfig, smsConfig]
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],

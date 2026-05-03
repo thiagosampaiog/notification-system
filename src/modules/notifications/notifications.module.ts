@@ -1,3 +1,5 @@
+import { EmailModule } from '../email/email.module';
+import { SmsModule } from '../sms/sms.module';
 import { Notification } from './entities/notification.entity';
 import { NotificationsController } from './notifications.controller';
 import { NotificationsService } from './notifications.service';
@@ -7,12 +9,12 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RmqOptions, ClientsModule, Transport } from '@nestjs/microservices';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { EmailModule } from '../email/email.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Notification]),
     EmailModule,
+    SmsModule,
     ClientsModule.registerAsync([
       {
         name: RABBITMQ_SERVICE,

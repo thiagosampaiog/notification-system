@@ -5,6 +5,7 @@ import { NotificationChannel, NotificationStatus } from '@app/common/types/notif
 import { Controller, Logger, NotFoundException } from '@nestjs/common';
 import { Ctx, EventPattern, Payload, RmqContext } from '@nestjs/microservices';
 import { EmailService } from '../email/email.service';
+import { SmsService } from '../sms/sms.service';
 
 @Controller()
 export class NotificationsWorker {
@@ -13,7 +14,8 @@ export class NotificationsWorker {
 
   constructor(
     private readonly notificationsService: NotificationsService,
-    private readonly emailService: EmailService
+    private readonly emailService: EmailService,
+    private readonly smsService: SmsService,
     // private readonly smsService: SmsService,
     // private readonly pushService: PushService
   ) {
@@ -36,7 +38,7 @@ export class NotificationsWorker {
 
       const notification = await this.notificationsService.findById(id);
       if (!notification) throw new NotFoundException(`Notification ${id} not found`);
-      const provider = this.emailService;
+      const provider = this.smsService;
       await provider.send(notification);
       await this.notificationsService.updateStatus(id, NotificationStatus.SENT);
       /* 

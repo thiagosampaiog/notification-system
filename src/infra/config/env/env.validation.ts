@@ -25,7 +25,12 @@ export const ENVSchema = z.object({
   AWS_ACCESS_KEY: z.string(),
   AWS_SECRET_KEY: z.string(),
   AWS_SES_REGION: z.string(),
-  AWS_SES_SOURCE_EMAIL: z.string()
+  AWS_SES_SOURCE_EMAIL: z.string(),
+
+  TWILIO_ACCOUNT_SID: z.string(),
+  TWILIO_AUTH_TOKEN: z.string(),
+  TWILIO_VERIFICATION_SERVICE_SID: z.string(),
+  TWILIO_SENDER_PHONE_NUMBER: z.string()
 });
 
 export type Env = z.infer<typeof ENVSchema>;
