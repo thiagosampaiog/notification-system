@@ -20,7 +20,12 @@ export const ENVSchema = z.object({
   JWT_REFRESH_TOKKEN_SECRET: z.string().default('notification-system'),
   REFRESH_TOKEN_EXPIRESIN: z.coerce.number().int().positive().default(86400),
   JWT_TOKEN_AUDIENCE: z.string().default('localhost:3001/v1/api'),
-  JWT_TOKEN_ISSUER: z.string().default('localhost:3001/v1/api')
+  JWT_TOKEN_ISSUER: z.string().default('localhost:3001/v1/api'),
+
+  AWS_ACCESS_KEY: z.string(),
+  AWS_SECRET_KEY: z.string(),
+  AWS_SES_REGION: z.string(),
+  AWS_SES_SOURCE_EMAIL: z.string()
 });
 
 export type Env = z.infer<typeof ENVSchema>;

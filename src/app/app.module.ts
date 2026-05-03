@@ -10,6 +10,7 @@ import typeormConfig from '../infra/config/env/typeorm.config';
 import { AuthModule } from '../modules/auth/auth.module';
 import { NotificationsModule } from '../modules/notifications/notifications.module';
 import { UsersModule } from '../modules/users/users.module';
+import awsConfig from '@app/infra/config/env/aws.config';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
@@ -23,7 +24,7 @@ import { TypeOrmModule, type TypeOrmModuleOptions } from '@nestjs/typeorm';
       isGlobal: true,
       envFilePath: `.env.${(environment || 'development').trim()}`,
       validate,
-      load: [authConfig, queueConfig, typeormConfig, appConfig, cacheConfig]
+      load: [authConfig, queueConfig, typeormConfig, appConfig, cacheConfig, awsConfig]
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
