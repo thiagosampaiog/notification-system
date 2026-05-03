@@ -30,7 +30,11 @@ export const ENVSchema = z.object({
   TWILIO_ACCOUNT_SID: z.string(),
   TWILIO_AUTH_TOKEN: z.string(),
   TWILIO_VERIFICATION_SERVICE_SID: z.string(),
-  TWILIO_SENDER_PHONE_NUMBER: z.string()
+  TWILIO_SENDER_PHONE_NUMBER: z.string(),
+
+  FIREBASE_PROJECT_ID: z.string(),
+  FIREBASE_CLIENT_EMAIL: z.string(),
+  FIREBASE_PRIVATE_KEY: z.string()
 });
 
 export type Env = z.infer<typeof ENVSchema>;
