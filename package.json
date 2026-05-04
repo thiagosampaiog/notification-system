@@ -61,7 +61,7 @@
     "@eslint/js": "^9.18.0",
     "@nestjs/cli": "^11.0.0",
     "@nestjs/schematics": "^11.0.0",
-    "@nestjs/testing": "^11.0.1",
+    "@nestjs/testing": "^11.1.19",
     "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "@types/amqplib": "^0.10.8",
     "@types/express": "^5.0.0",
@@ -91,7 +91,14 @@
       "json",
       "ts"
     ],
-    "rootDir": "src",
+    "rootDir": ".",
+    "moduleNameMapper": {
+      "^@app/(.*)$": "<rootDir>/src/$1",
+      "^@modules/(.*)$": "<rootDir>/src/modules/$1",
+      "^@common/(.*)$": "<rootDir>/src/common/$1",
+      "^@config/(.*)$": "<rootDir>/src/config/$1",
+      "^@database/(.*)$": "<rootDir>/src/database/$1"
+    },
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
@@ -99,7 +106,7 @@
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
-    "coverageDirectory": "../coverage",
+    "coverageDirectory": "coverage",
     "testEnvironment": "node"
   }
 }
