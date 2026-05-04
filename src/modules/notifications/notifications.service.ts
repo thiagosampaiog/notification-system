@@ -1,10 +1,10 @@
 import { CreateNotificationDto } from './dto/create-notification.dto';
 import { Notification } from './entities/notification.entity';
 import { RABBITMQ_SERVICE } from '@app/common/constants/injection-tokens';
-import { NotificationCreatedEvent } from '@app/common/events/notification-created.event';
-import { NotificationStatus } from '@app/common/types/notifications.type';
+import { NOTIFICATION_CREATED_EVENT } from '@app/common/constants/notifications.constants';
+import { NotificationPriority, NotificationStatus } from '@app/common/types/notifications.type';
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { ClientProxy, RmqRecordBuilder } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -17,28 +17,21 @@ export class NotificationsService {
     private client: ClientProxy
   ) {}
 
+  public mapPriority = {
+    [NotificationPriority.HIGH]: 10,
+    [NotificationPriority.MEDIUM]: 5,
+    [NotificationPriority.LOW]: 1
+  };
+
   public async create(input: CreateNotificationDto) {
-    // Services Record: email: this.sesService, sms: this.smsService, push: this.fcmService ( at the worker )
-    /* 
-    save at db now or at the worker? : 
-    channel
-    recipient
-    message
-    priority
-    data?
-    status pending
-    then:
-    this.rabbitmqChannel.send() or eventEmitter?
-    return 201 created or 200 OK
-    rabbitmq choose the order by priority
-    */
     const notification = this.notificationsRepository.create(input);
     const saved = await this.notificationsRepository.save(notification);
 
-    this.client.emit<void, NotificationCreatedEvent>('notification.created', {
-      id: saved.id,
-      priority: saved.priority
-    });
+    const rmqPriority = this.mapPriority[notification.priority];
+
+    const record = new RmqRecordBuilder({ id: saved.id }).setOptions({ priority: rmqPriority }).build();
+
+    this.client.emit(NOTIFICATION_CREATED_EVENT, record);
 
     return saved;
   }

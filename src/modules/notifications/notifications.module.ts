@@ -2,6 +2,7 @@ import { EmailModule } from '../email/email.module';
 import { FirebaseModule } from '../firebase/firebase.module';
 import { SmsModule } from '../sms/sms.module';
 import { Notification } from './entities/notification.entity';
+import { NotificationsRecoveryWorker } from './notifications-recovery.worker';
 import { NotificationsController } from './notifications.controller';
 import { NotificationsService } from './notifications.service';
 import { NotificationsWorker } from './notifications.worker';
@@ -26,9 +27,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
           transport: Transport.RMQ,
           options: {
             urls: [configService.getOrThrow<string>('queue.url')],
-            queue: configService.getOrThrow<string>('queue.name'),
+            queue: configService.getOrThrow<string>('queue.main_name'),
             queueOptions: {
-              durable: true
+              durable: true,
+              deadLetterExchange: '',
+              deadLetterRoutingKey: configService.getOrThrow<string>('queue.recovery_name'),
+              arguments: {
+                'x-max-priority': 10
+              }
             }
           }
         })
@@ -36,7 +42,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     ])
   ],
   providers: [NotificationsService],
-  controllers: [NotificationsController, NotificationsWorker],
+  controllers: [NotificationsController, NotificationsWorker, NotificationsRecoveryWorker],
   exports: [NotificationsService]
 })
 export class NotificationsModule {}

@@ -3,7 +3,7 @@ import { isDevEnv } from './infra/config/app.enviroment';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
-import { RmqOptions, Transport } from '@nestjs/microservices';
+import { ClientProviderOptions, RmqOptions, Transport } from '@nestjs/microservices';
 import helmet from 'helmet';
 
 async function bootstrap() {
@@ -12,7 +12,8 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
   const rabbitmqUrl = configService.getOrThrow<string>('queue.url') as string;
-  const rabbitmqQueue = configService.getOrThrow<string>('queue.name') as string;
+  const rabbitmqMainQueue = configService.getOrThrow<string>('queue.main_name') as string;
+  const rabbitmqRecoveryQueue = configService.getOrThrow<string>('queue.recovery_name') as string;
   const host = configService.getOrThrow('app.host');
   const port = configService.getOrThrow('app.port');
   const appName = configService.getOrThrow<string>('app.name');
@@ -21,15 +22,36 @@ async function bootstrap() {
   app.setGlobalPrefix('/v1/api');
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
-  app.connectMicroservice<RmqOptions>({
+  const mainQueueMicroservice: RmqOptions = {
     transport: Transport.RMQ,
     options: {
       urls: [rabbitmqUrl],
-      queue: rabbitmqQueue,
-      queueOptions: { durable: true },
-      noAck: false
+      queue: rabbitmqMainQueue,
+      noAck: false,
+      queueOptions: {
+        durable: true,
+        deadLetterExchange: '',
+        prefetchCount: 1,
+        deadLetterRoutingKey: rabbitmqRecoveryQueue,
+        arguments: {
+          'x-max-priority': 10
+        }
+      }
     }
-  });
+  };
+
+  const recoveryQueueMicroservice: RmqOptions = {
+    transport: Transport.RMQ,
+    options: {
+      urls: [rabbitmqUrl],
+      queue: rabbitmqRecoveryQueue,
+      noAck: false,
+      queueOptions: { durable: true, messageTtl: 300000, prefetchCount: 1 }
+    }
+  };
+
+  app.connectMicroservice<RmqOptions>(mainQueueMicroservice);
+  app.connectMicroservice<RmqOptions>(recoveryQueueMicroservice);
 
   await app.startAllMicroservices();
 
@@ -42,6 +64,8 @@ async function bootstrap() {
     methods: ['HEAD', 'GET', 'POST', 'PUT', 'PATCH', 'DELETE']
   });
   await app.listen(port, host);
-  logger.log(`${appName} started listening on host: ${host}, port: ${port}, queue: ${rabbitmqQueue}`);
+  logger.log(
+    `${appName} started listening on host: ${host}, port: ${port}, queues: ${rabbitmqMainQueue} & ${rabbitmqRecoveryQueue}`
+  );
 }
 bootstrap();

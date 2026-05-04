@@ -13,7 +13,8 @@ export const ENVSchema = z.object({
   DATABASE_URL: z.string().default('postgresql://notification:notification123@db:5432/notification'),
   REDIS_URL: z.string().default('redis://cache:6379'),
   RABBITMQ_QUEUE_URL: z.string().default('amqp://notification:notification123@queue:5672'),
-  RABBITMQ_QUEUE_NAME: z.string().default('RABBITMQ_NOTIFICATION_QUEUE'),
+  RABBITMQ_QUEUE_MAIN_NAME: z.string().default('RABBITMQ_MAIN_NOTIFICATION_QUEUE'),
+  RABBITMQ_QUEUE_RECOVERY_NAME: z.string().default('RABBITMQ_RECOVERY_NOTIFICATION_QUEUE'),
 
   JWT_TOKEN_SECRET: z.string().default('notification-system'),
   JWT_TOKEN_EXPIRESIN: z.coerce.number().int().positive().default(3600),
