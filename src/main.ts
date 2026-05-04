@@ -4,6 +4,7 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { ClientProviderOptions, RmqOptions, Transport } from '@nestjs/microservices';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
 
 async function bootstrap() {
@@ -63,6 +64,11 @@ async function bootstrap() {
     maxAge: 600,
     methods: ['HEAD', 'GET', 'POST', 'PUT', 'PATCH', 'DELETE']
   });
+
+  const config = new DocumentBuilder().setTitle('Notification System').setVersion('1.0').addBearerAuth().build();
+  const documentFactory = () => SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('docs', app, documentFactory);
+
   await app.listen(port, host);
   logger.log(
     `${appName} started listening on host: ${host}, port: ${port}, queues: ${rabbitmqMainQueue} & ${rabbitmqRecoveryQueue}`

@@ -1,13 +1,14 @@
-import { PartialType } from '@nestjs/swagger'
-import { IsEmail, IsNotEmpty, IsPhoneNumber, IsString, IsStrongPassword, IsUrl } from 'class-validator'
+import { ApiProperty } from '@nestjs/swagger';
+import { IsEmail, IsNotEmpty, IsStrongPassword } from 'class-validator';
 
 export class AuthSignInDto {
+  @ApiProperty({ example: 'user@example.com' })
   @IsEmail()
   @IsNotEmpty()
-  email!: string
+  email!: string;
 
+  @ApiProperty({ example: 'StrongPass#123' })
   @IsNotEmpty()
   @IsStrongPassword()
-  password!: string
-
+  password!: string;
 }
