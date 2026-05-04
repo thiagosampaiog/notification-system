@@ -49,6 +49,7 @@ export class NotificationsWorker {
 
       const provider = this.providers[notification.channel];
       await provider.send(notification);
+      // throw new Error;
       await this.notificationsService.updateStatus(id, NotificationStatus.SENT);
       rmqChannel.ack(originalMessage);
 
